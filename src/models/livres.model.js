@@ -1,11 +1,11 @@
 import pool from '../config/db_pg.js';
 
-export const getListeLivres = async (indisponible) => {
-    let requeteListe = `SELECT * from livres`;
-    const params = [];
+export const getListeLivres = async (indisponible, bibliotheque_id) => {
+    let requeteListe = `SELECT * from livres WHERE bibliotheque_id = $1`;
+    const params = [bibliotheque_id];
 
     if(!indisponible){
-        requeteListe += ` WHERE disponible = $1;`
+        requeteListe += ` AND disponible = $2;`
         params.push(true);
     }
 
