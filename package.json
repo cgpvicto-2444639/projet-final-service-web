@@ -1,0 +1,30 @@
+{
+  "name": "serviceweb",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "module",
+    "url": "git+https://github.com/cgpvicto-2444639/projet-final-service-web.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cgpvicto-2444639/projet-final-service-web/issues"
+  },
+  "homepage": "https://github.com/cgpvicto-2444639/projet-final-service-web#readme",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "morgan": "^1.10.1",
+    "pg": "^8.20.0"
+  }
+}
