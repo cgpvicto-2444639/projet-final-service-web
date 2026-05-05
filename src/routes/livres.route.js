@@ -4,15 +4,22 @@ import express from 'express';
 import { supprimerPret } from '../models/livres.model.js';
 const router = express.Router();
 
+// Routes pour les livres
 router.get('/liste', authentification, controller.afficherListeLivres);
-router.get('/livre/:id', controller.afficherLivre);
-router.put('/modifier_status_livre/:id', controller.modifierDisponibleLivre);
-router.post('/', controller.ajouterUnLivre);
-router.put('/modifier_livre/:id', controller.modifierUnLivre);
-router.delete('/:id', controller.supprimerUnLivre);
+router.get('/livre/:id', authentification, controller.afficherLivre);
+router.put('/modifier_status_livre/:id', authentification, controller.modifierDisponibleLivre);
+router.post('/', authentification, controller.ajouterUnLivre);
+router.put('/modifier_livre/:id', authentification, controller.modifierUnLivre);
+router.delete('/:id', authentification, controller.supprimerUnLivre);
 
-router.put('/modifier_status_pret/:id', controller.modifierDisponiblePret);
-router.post('/ajout_pret', controller.ajouterUnPret);
-router.put('/modifier_pret/:id', controller.modifierUnPret);
-router.delete('/supp_pret/:id', controller.supprimerUnPret);
+// Routes pour les prêts
+router.put('/modifier_status_pret/:id', authentification, controller.modifierDisponiblePret);
+router.post('/ajout_pret', authentification, controller.ajouterUnPret);
+router.put('/modifier_pret/:id', authentification, controller.modifierUnPret);
+router.delete('/supp_pret/:id', authentification, controller.supprimerUnPret);
+
+// Routes pour l'utilisateur
+
+
+
 export default router;
