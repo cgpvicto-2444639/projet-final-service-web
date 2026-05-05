@@ -13,4 +13,5 @@ router.delete('/:id', controller.supprimerUnLivre);
 
 router.put('/modifier_status_pret/:id', controller.modifierDisponiblePret);
 router.post('/ajout_pret', controller.ajouterUnPret);
+router.put('/modifier_pret/:id', controller.modifierUnPret);
 export default router;

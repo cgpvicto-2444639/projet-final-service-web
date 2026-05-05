@@ -1,4 +1,4 @@
-import {getListeLivres, getLivreById, modifierStatusLivre, ajouterLivre, modifierLivre, supprimerLivre, modifierStatusPret, getPretsByLivreId, ajouterPret} from '../models/livres.model.js';
+import {getListeLivres, getLivreById, modifierStatusLivre, ajouterLivre, modifierLivre, supprimerLivre, modifierStatusPret, getPretsByLivreId, ajouterPret, modifierPret} from '../models/livres.model.js';
 
 export const afficherListeLivres = async (req, res) => {
     const afficherTout = req.query.tous === 'true';
@@ -154,5 +154,31 @@ export const ajouterUnPret = async (req, res) => {
             return res.status(404).json({ erreur: erreur.message });
         }
         res.status(500).json({ erreur: `Echec lors de l'ajout du pret` });
+    }
+};
+
+export const modifierUnPret = async (req, res) => {
+    const id = req.params.id;
+    const {livre_id, emprunteur, date_retour, disponible} = req.body;
+
+    const champsRequis = ['livre_id', 'emprunteur', 'date_retour', 'disponible'];
+    const champManquants = champsRequis.filter(champ => req.body[champ] === undefined);
+
+    if (champManquants.length > 0) {
+        return res.status(400).json({
+            erreur: 'Le format des données est invalide',
+            champs_manquants: champManquants
+        });
+    }
+
+    try {
+        const affectedRows = await modifierPret(id, livre_id, emprunteur, date_retour, disponible);
+        
+        if (affectedRows === 0){
+            return res.status(404).json({ erreur: `Le pret avec l'id ${id} n'existe pas dans la base de données` });
+        }
+        res.status(200).json({ message: `Le pret avec l'id ${id} a été modifié avec succès` });
+    } catch (erreur) {
+        res.status(500).json({ erreur: `Echec lors de la modification du pret avec l'id ${id}` });
     }
 };

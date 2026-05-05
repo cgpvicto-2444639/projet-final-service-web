@@ -128,3 +128,16 @@ export const ajouterPret = async (livre_id, emprunteur, date_retour, disponible)
         throw erreur;
     }
 };
+
+export const modifierPret = async (id, livre_id, emprunteur, date_retour, disponible) => {
+    const requete = `UPDATE prets SET livre_id = $1, emprunteur = $2, date_retour = $3, disponible = $4 WHERE id = $5 RETURNING id;`;
+    const params = [livre_id, emprunteur, date_retour, disponible, id];
+
+    try {
+        const resultat = await pool.query(requete, params);
+        return resultat.rowCount;
+    } catch (erreur) {
+        console.log(`Erreur ${erreur.code} : ${erreur.message}`);
+        throw erreur;
+    }
+};
