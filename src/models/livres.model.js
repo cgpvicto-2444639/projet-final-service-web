@@ -141,3 +141,16 @@ export const modifierPret = async (id, livre_id, emprunteur, date_retour, dispon
         throw erreur;
     }
 };
+
+export const supprimerPret = async (id) => {
+    const requete = `DELETE FROM prets WHERE id = $1`;
+    const params = [id];
+
+    try {
+        const resultat = await pool.query(requete, params);
+        return resultat.rowCount;
+    } catch (erreur) {
+        console.log(`Erreur ${erreur.code} : ${erreur.message}`);
+        throw erreur;
+    }
+};

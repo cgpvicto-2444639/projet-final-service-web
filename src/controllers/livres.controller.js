@@ -1,4 +1,4 @@
-import {getListeLivres, getLivreById, modifierStatusLivre, ajouterLivre, modifierLivre, supprimerLivre, modifierStatusPret, getPretsByLivreId, ajouterPret, modifierPret} from '../models/livres.model.js';
+import {getListeLivres, getLivreById, modifierStatusLivre, ajouterLivre, modifierLivre, supprimerLivre, modifierStatusPret, getPretsByLivreId, ajouterPret, modifierPret, supprimerPret} from '../models/livres.model.js';
 
 export const afficherListeLivres = async (req, res) => {
     const afficherTout = req.query.tous === 'true';
@@ -180,5 +180,21 @@ export const modifierUnPret = async (req, res) => {
         res.status(200).json({ message: `Le pret avec l'id ${id} a été modifié avec succès` });
     } catch (erreur) {
         res.status(500).json({ erreur: `Echec lors de la modification du pret avec l'id ${id}` });
+    }
+};
+
+export const supprimerUnPret = async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const affectedRows = await supprimerPret(id);
+
+        if(affectedRows === 0){
+            return res.status(404).json({ erreur: `Le pret avec l'id ${id} n'existe pas dans la base de données` });
+        }
+
+        res.status(200).json({ message: `Le livre avec l'pret avec l'id ${id} a été supprimé avec succès` });
+    } catch (erreur) {
+        res.status(500).json({ erreur: `Echec lors de la suppression du pret avec l'id ${id}` });
     }
 };
