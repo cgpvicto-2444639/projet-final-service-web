@@ -1,4 +1,4 @@
-import {getListeLivres} from '../models/livres.model.js';
+import {getListeLivres, getLivreById} from '../models/livres.model.js';
 
 export const afficherListeLivres = async (req, res) => {
     const afficherTout = req.query.tous === 'true';
@@ -12,5 +12,16 @@ export const afficherListeLivres = async (req, res) => {
         });
     } catch (erreur) {
         res.status(500).json({ erreur: 'Echec lors de la récupération de la liste des livres' });
+    }
+};
+
+export const afficherLivre = async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const livre = await getLivreById(id);
+        res.status(200).json(livre);
+    } catch (erreur) {
+         res.status(500).json({ erreur: "Erreur lors de la récupération du livre avec id " + req.params.id });
     }
 };
