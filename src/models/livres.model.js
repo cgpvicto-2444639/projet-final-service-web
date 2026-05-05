@@ -76,3 +76,16 @@ export const ajouterLivre = async (bibliotheque_id, titre, auteur, description, 
         throw erreur;
     }
 };
+
+export const modifierLivre = async (id, bibliotheque_id, titre, auteur, description, isbn, date_ajout, disponible) => {
+    const requete = `UPDATE livres SET bibliotheque_id = $1, titre = $2, auteur = $3, description = $4, isbn = $5, date_ajout = $6, disponible = $7 WHERE id = $8 RETURNING id;`;
+    const params = [bibliotheque_id, titre, auteur, description, isbn, date_ajout, disponible, id];
+
+    try {
+        const resultat = await pool.query(requete, params);
+        return resultat.rowCount;
+    } catch (erreur) {
+        console.log(`Erreur ${erreur.code} : ${erreur.message}`);
+        throw erreur;
+    }
+};
