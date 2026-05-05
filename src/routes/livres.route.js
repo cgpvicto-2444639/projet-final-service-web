@@ -1,4 +1,5 @@
 import * as controller from '../controllers/livres.controller.js';
+import * as controllerBibliotheque from '../controllers/bibliotheques.controller.js';
 import authentification from '../middlewares/authentification.middleware.js';
 import express from 'express';
 import { supprimerPret } from '../models/livres.model.js';
@@ -18,8 +19,8 @@ router.post('/ajout_pret', authentification, controller.ajouterUnPret);
 router.put('/modifier_pret/:id', authentification, controller.modifierUnPret);
 router.delete('/supp_pret/:id', authentification, controller.supprimerUnPret);
 
-// Routes pour l'utilisateur
-
+// Routes pour la bibliothèque
+router.post('/ajout_bibli', controllerBibliotheque.ajouterBibliothequeController);
 
 
 export default router;

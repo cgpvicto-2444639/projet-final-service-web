@@ -1,7 +1,7 @@
 import pool from '../config/db_pg.js';
 
 export const validationCle = async (cle_api) => {
-    const requete = `SELECT * FROM bibliotheque WHERE cle_api = $1`;
+    const requete = `SELECT * FROM bibliotheques WHERE cle_api = $1`;
     const params = [cle_api];
 
     try{
@@ -14,4 +14,4 @@ export const validationCle = async (cle_api) => {
         console.error(`Erreur ${erreur.code} : ${erreur.message}`);
         throw erreur;
     }
-}
+};
