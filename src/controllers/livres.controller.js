@@ -1,4 +1,4 @@
-import {getListeLivres, getLivreById, modifierStatus, ajouterLivre, modifierLivre} from '../models/livres.model.js';
+import {getListeLivres, getLivreById, modifierStatus, ajouterLivre, modifierLivre, supprimerLivre} from '../models/livres.model.js';
 
 export const afficherListeLivres = async (req, res) => {
     const afficherTout = req.query.tous === 'true';
@@ -90,5 +90,21 @@ export const modifierUnLivre = async (req, res) => {
         res.status(200).json({ message: `Le livre avec l'id ${id} a été modifié avec succès` });
     } catch (erreur) {
         res.status(500).json({ erreur: `Echec lors de la modification du livre avec l'id ${id}` });
+    }
+};
+
+export const supprimerUnLivre = async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const affectedRows = await supprimerLivre(id);
+
+        if(affectedRows === 0){
+            return res.status(404).json({ erreur: `Le livre avec l'id ${id} n'existe pas dans la base de données` });
+        }
+
+        res.status(200).json({ message: `Le livre avec l'id ${id} a été supprimé avec succès` });
+    } catch (erreur) {
+        res.status(500).json({ erreur: `Echec lors de la suppression du livre avec l'id ${id}` });
     }
 };

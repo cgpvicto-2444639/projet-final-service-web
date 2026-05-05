@@ -89,3 +89,14 @@ export const modifierLivre = async (id, bibliotheque_id, titre, auteur, descript
         throw erreur;
     }
 };
+
+export const supprimerLivre = async (id) => {
+    try {
+        await pool.query(`DELETE FROM prets WHERE livre_id = $1`, [id]);
+        const resultat = await pool.query(`DELETE FROM livres WHERE id = $1`, [id]);
+        return resultat.rowCount;
+    } catch (erreur) {
+        console.log(`Erreur ${erreur.code} : ${erreur.message}`);
+        throw erreur;
+    }
+};
