@@ -19,39 +19,34 @@ export const getListeLivres = async (indisponible, bibliotheque_id) => {
 }
 
 export const getLivreById = async (id) => {
-     const requete = `
-        SELECT
-            l.titre,
-            l.auteur,
-            l.isbn,
-            l.description,
-            l.disponible,
-            p.id AS pret_id,
-            p.emprunteur,
-            p.date_retour,
-            CASE WHEN p.date_retour >= CURRENT_DATE THEN true ELSE false END AS en_cours
-        FROM livres l
-        LEFT JOIN prets p ON p.livre_id = l.id
-        WHERE l.id = $1
-        ORDER BY p.date_retour DESC;
-    `;
+    const requete = `SELECT bibliotheque_id, titre, auteur, isbn, date_ajout, description, disponible FROM livres WHERE id = $1;`;
     const params = [id];
 
     try {
         const resultat = await pool.query(requete, params);
         if (resultat.rows.length === 0) return null;
-        const { titre, auteur, isbn, description, disponible } = resultat.rows[0];
-
-        const prets = resultat.rows[0].pret_id === null ? [] : resultat.rows;
-
-        return { titre, auteur, isbn, description, disponible, prets };
+        return resultat.rows[0];
     } catch (erreur) {
         console.error(`Erreur ${erreur.code} : ${erreur.message}`);
         throw erreur;
     }
 };
 
-export const modifierStatus = async (id, disponible) => {
+export const getPretsByLivreId = async (id) => {
+    const requete = `SELECT livre_id, emprunteur, date_retour, disponible FROM prets WHERE livre_id = $1;`;
+    const params = [id];
+
+    try {
+        const resultat = await pool.query(requete, params);
+        if(resultat.rows.length === 0) return null;
+        return resultat.rows;
+    } catch (erreur) {
+        console.error(`Erreur ${erreur.code} : ${erreur.message}`);
+        throw erreur;
+    }
+};
+
+export const modifierStatusLivre = async (id, disponible) => {
     const requete = `UPDATE livres SET disponible = $1 WHERE id = $2;`;
     const params = [disponible, id];
 
@@ -95,6 +90,39 @@ export const supprimerLivre = async (id) => {
         await pool.query(`DELETE FROM prets WHERE livre_id = $1`, [id]);
         const resultat = await pool.query(`DELETE FROM livres WHERE id = $1`, [id]);
         return resultat.rowCount;
+    } catch (erreur) {
+        console.log(`Erreur ${erreur.code} : ${erreur.message}`);
+        throw erreur;
+    }
+};
+
+export const modifierStatusPret = async (id, disponible) => {
+    const requete = `UPDATE prets SET disponible = $1 WHERE id = $2;`;
+    const params = [disponible, id];
+
+    try {
+        const resultat = await pool.query(requete, params);
+        return resultat.rowCount;
+    } catch (erreur) {
+        console.error(`Erreur ${erreur.code} : ${erreur.message}`);
+        throw erreur;
+    }
+};
+
+export const ajouterPret = async (livre_id, emprunteur, date_retour, disponible) => {
+    const livreExiste = await pool.query('SELECT id FROM livres WHERE id = $1', [livre_id]);
+    if (livreExiste.rows.length === 0) {
+        const erreur = new Error(`Aucun livre trouvé avec l'id ${livre_id}`);
+        erreur.code = 'LIVRE_INTROUVABLE';
+        throw erreur;
+    }
+
+    const requete = `INSERT INTO prets (livre_id, emprunteur, date_retour, disponible) VALUES ($1, $2, $3, $4) RETURNING id;`;
+    const params = [livre_id, emprunteur, date_retour, disponible];
+
+    try {
+        const resultat = await pool.query(requete, params);
+        return { id: resultat.rows[0].id, livre_id, emprunteur, date_retour, disponible};
     } catch (erreur) {
         console.log(`Erreur ${erreur.code} : ${erreur.message}`);
         throw erreur;
