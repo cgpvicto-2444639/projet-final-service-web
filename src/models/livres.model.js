@@ -33,7 +33,7 @@ export const getLivreById = async (id) => {
         FROM livres l
         LEFT JOIN prets p ON p.livre_id = l.id
         WHERE l.id = $1
-        ORDER BY p.date_retour DESC
+        ORDER BY p.date_retour DESC;
     `;
     const params = [id];
 
@@ -47,6 +47,32 @@ export const getLivreById = async (id) => {
         return { titre, auteur, isbn, description, disponible, prets };
     } catch (erreur) {
         console.error(`Erreur ${erreur.code} : ${erreur.message}`);
+        throw erreur;
+    }
+};
+
+export const modifierStatus = async (id, disponible) => {
+    const requete = `UPDATE livres SET disponible = $1 WHERE id = $2;`;
+    const params = [disponible, id];
+
+    try {
+        const resultat = await pool.query(requete, params);
+        return resultat.rowCount;
+    } catch (erreur) {
+        console.error(`Erreur ${erreur.code} : ${erreur.message}`);
+        throw erreur;
+    }
+};
+
+export const ajouterLivre = async (bibliotheque_id, titre, auteur, description, isbn, date_ajout, disponible) => {
+    const requete = `INSERT INTO livres (bibliotheque_id, titre, auteur, description, isbn, date_ajout, disponible) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id;`;
+    const params = [bibliotheque_id, titre, auteur, description, isbn, date_ajout, disponible];
+
+    try {
+        const resultat = await pool.query(requete, params);
+        return { id: resultat.insertId, bibliotheque_id, titre, auteur, description, isbn, date_ajout, disponible};
+    } catch (erreur) {
+        console.log(`Erreur ${erreur.code} : ${erreur.message}`);
         throw erreur;
     }
 };
