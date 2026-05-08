@@ -19,8 +19,9 @@ router.post('/ajout_pret', authentification, controller.ajouterUnPret);
 router.put('/modifier_pret/:id', authentification, controller.modifierUnPret);
 router.delete('/supp_pret/:id', authentification, controller.supprimerUnPret);
 
-// Routes pour la bibliothèque
+// Routes pour la bibliothèque (pas besoin d'authentification)
 router.post('/ajout_bibli', controllerBibliotheque.ajouterBibliothequeController);
+router.post('/cle_api', controllerBibliotheque.getCleApiController);
 
 
 export default router;

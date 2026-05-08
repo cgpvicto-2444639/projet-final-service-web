@@ -1,13 +1,25 @@
 import express, { json } from 'express';
 import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
 import fs from 'fs';
+const swaggerDocument = JSON.parse(fs.readFileSync('./src/config/documentation.json', 'utf8'));
 import router from './src/routes/livres.route.js'
+
+const swaggerOptions = {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: "Bibliotheques API"
+};
 
 const app = express();
 dotenv.config();
 
 // Middleware
 app.use(express.json());
+
+// Visuel documentation
+app.use('/api/docs',
+        swaggerUi.serve,
+        swaggerUi.setup(swaggerDocument, swaggerOptions));
 
 // Routes
 app.use('/api/bibliotheque', router);

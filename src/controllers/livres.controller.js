@@ -68,6 +68,7 @@ export const ajouterUnLivre = async (req, res) => {
             livre
         });
     } catch (erreur) {
+        //console.log(`Erreur SQL - code: ${erreur.code} message: ${erreur.message}`);
         res.status(500).json({ erreur: `Echec lors de l'ajout du livre ${titre}` });
     }
 };
@@ -94,6 +95,7 @@ export const modifierUnLivre = async (req, res) => {
         }
         res.status(200).json({ message: `Le livre avec l'id ${id} a été modifié avec succès` });
     } catch (erreur) {
+        console.log(`Erreur SQL - code: ${erreur.code} message: ${erreur.message}`);
         res.status(500).json({ erreur: `Echec lors de la modification du livre avec l'id ${id}` });
     }
 };

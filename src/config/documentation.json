@@ -1,0 +1,831 @@
+{
+    "openapi": "3.1.0",
+    "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization" 
+      }
+    }
+  },
+    "info":{
+       "title": "Bibliothèque API",
+        "summary": "Mon API créer des bibliothèques, contenant des livres qui peuvent être prêtés, puis ceux-ci se font gérer par mon API, la bibliothèque.",
+        "description": "Mon API peux créer des bibliothèques, des livres et des prêts. Avec les routes, nous pouvons contrôler la généralité de ce qu'une bibliothèque fait normalement, donc enregistrer des livres et les prêter aux lecteurs.",
+        "contact": {
+            "name": "API Support",
+            "url": "https://www.example.com/support",
+            "email": "support@example.com"
+        },
+        "version": "1.0.1"
+    },
+        "servers": [
+        {
+            "url": "http://127.0.0.1:3000/",
+            "description": "Serveur de développement"
+        },
+        {
+            "url": "mon serveur sur Render",
+            "description": "Serveur en ligne"
+        }
+    ],
+    "paths": {
+        "/api/bibliotheque/liste": {
+            "get": {
+                "summary": "Affichage de la liste de livre selon la disponibilité dans la bibliothèque",
+                "tags": ["LivresAffiche"],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "tous",
+                        "description": "Pour afficher tout les livres.",
+                        "schema": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "required": false
+                    }
+                ],
+                "security": [
+                    { "ApiKeyAuth": [] }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retourne une liste de livres",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "format": "int32",
+                                                "example": 1
+                                            },
+                                            "bibliotheque_id": {
+                                                "type": "integer",
+                                                "format": "int32",
+                                                "example": 3
+                                            },
+                                            "titre": {
+                                                "type": "string",
+                                                "example": "Powerless"
+                                            },
+                                            "auteur": {
+                                                "type": "string",
+                                                "example": "Lauren Roberts"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "616 pages : 1 illustration ; 23 cm"
+                                            },
+                                            "isbn": {
+                                                "type": "string",
+                                                "example": "9782898113321"
+                                            },
+                                            "date_ajout": {
+                                                "type": "string",
+                                                "example": "2023-07-1T04:00:00.000Z"
+                                            },
+                                            "disponible": {
+                                                "type": "boolean",
+                                                "example": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Clé API invalide"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Récupération de la liste de livres non rencontrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Echec lors de la récupération de la liste des livres"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bibliotheque/livre/{id}": {
+            "get": {
+                "summary": "Affichage d'un livre en particulier venant de l'id que l'utilisateur mettra dans l'url de la route.",
+                "tags": ["LivresAffiche"],
+                "security": [
+                    { "ApiKeyAuth": [] }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "id souhaité du livre.",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Affichage d'un livre avec son id.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "example": 1
+                                        },
+                                        "bibliotheque_id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "example": 3
+                                        },
+                                        "titre": {
+                                            "type": "string",
+                                            "example": "Powerless"
+                                        },
+                                        "auteur": {
+                                            "type": "string",
+                                            "example": "Lauren Roberts"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "616 pages : 1 illustration ; 23 cm"
+                                        },
+                                        "isbn": {
+                                            "type": "string",
+                                            "example": "9782898113321"
+                                        },
+                                        "date_ajout": {
+                                            "type": "string",
+                                            "example": "2023-07-1T04:00:00.000Z"
+                                        },
+                                        "disponible": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        
+                                        "type": "array",
+                                        "prets": {
+                                            "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "format": "int32",
+                                                "example": 1
+                                            },
+                                            "livre_id": {
+                                                "type": "integer",
+                                                "format": "int32",
+                                                "example": 3
+                                            },
+                                            "emprunteur": {
+                                                "type": "string",
+                                                "example": "Christine Lehoux"
+                                            },
+                                            "date_retour": {
+                                                "type": "string",
+                                                "example": "2023-07-1T04:00:00.000Z"
+                                            },
+                                            "disponible": {
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        }
+                                    }
+
+                                    }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Clé API invalide"
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Récupération du livre non rencontrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Échec lors de la récupération du livre"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bibliotheque/modifier_status_livre/{id}": {
+            "put": {
+                "summary": "Route qui modifie la disponibilité d'un livre.",
+                "tags": ["LivreModifie"],
+                "description": "Modifier le status d'un livre.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id du livre",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "exemple" : "1"
+                        }
+                    }
+                ],
+                "security": [
+                    { "ApiKeyAuth": [] }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                         "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "disponible": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        }
+                                    }
+                                }
+                            }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Modifie le champs 'disponible' de la table livre du livre choisi par l'id dans l'url.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le livre avec l'id 3 a été modifié avec succès"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Clé API invalide"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Le livre n'existe pas dans la base de donnée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le livre avec l'id n'existe pas dans la base de données"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Modification du livre non rencontrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Echec lors de la modification du livre"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bibliotheque/": {
+            "post": {
+                "summary": "Ajout un livre dans la bibliothèque",
+                "tags": ["LivreAjout"],
+                "security": [
+                    { "ApiKeyAuth": [] }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                         "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "bibliotheque_id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "example": "1"
+                                        },
+                                        "titre": {
+                                            "type": "string",
+                                            "example": "Le Horla : la fracture corrompue"
+                                        }, 
+                                        "auteur": {
+                                            "type": "string",
+                                            "example": "Émile Lafrenière"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "312 pages 21x13cm"
+                                        },
+                                        "isbn":{
+                                            "type": "string",
+                                            "example": "9782898481215"
+                                        },
+                                        "date_ajout":{
+                                            "type": "string",
+                                            "example": "2023-07-1T04:00:00.000Z"
+                                        },
+                                        "disponible": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        }
+                                    }
+                                }
+
+                         }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ajout d'un livre",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                   "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le livre Powerless a été ajouté avec succès"
+                                            },
+                                        "livre": {
+                                            "type": "object",
+                                                "properties": {
+                                                    "bibliotheque_id": {
+                                                        "type": "integer",
+                                                        "format": "int32",
+                                                        "example":  1
+                                                    },
+                                                    "titre": {
+                                                        "type": "string",
+                                                        "example": "Powerless"
+                                                    },
+                                                    "auteur": {
+                                                        "type": "string",
+                                                        "example": "Lauren Roberts"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "616 pages : 1 illustration ; 23 cm"
+                                                    },
+                                                    "isbn": {
+                                                        "type": "string",
+                                                        "example": "9782898113321"
+                                                    },
+                                                    "date_ajout": {
+                                                        "type": "string",
+                                                        "example": "2023-07-1T04:00:00.000Z"
+                                                    },
+                                                    "disponible": {
+                                                        "type": "boolean",
+                                                        "example": false
+                                                    }
+                                                }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Format invalide des données",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le format des données est invalide"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Clé API invalide"
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Modification du livre non rencontrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Echec lors de l'ajout du livre Powerless"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bibliotheque/modifier_livre/{id}": {
+            "put": {
+                "summary": "Route qui modifie les détails d'un livre",
+                "tags": ["LivreModifie"],
+                "description": "Modifier les détails d'un livre.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id du livre",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "exemple" : "1"
+                        }
+                    }
+                ],
+                "security": [
+                    { "ApiKeyAuth": [] }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                         "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "bibliotheque_id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "example": 1
+                                        },
+                                        "titre": {
+                                            "type": "string",
+                                            "example": "Powerless"
+                                        },
+                                        "auteur": {
+                                            "type": "string",
+                                            "example": "Lauren Roberts"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "616 pages : 1 illustration ; 23 cm"
+                                        },
+                                         "isbn": {
+                                            "type": "string",
+                                            "example": "9782898113321"
+                                        },
+                                        "date_ajout": {
+                                            "type": "string",
+                                            "example": "2023-07-1T04:00:00.000Z"
+                                        },
+                                        "disponible": {
+                                            "type": "boolean",
+                                            "example": false
+                                        }
+                                    }
+                                }
+                            }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le livre avec l'id 1 a été modifié avec succès"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Format invalide des données",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le format des données est invalide"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Clé API invalide"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Le livre n'existe pas dans la base de donnée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le livre avec l'id 3 n'existe pas dans la base de données"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Modification du livre non rencontrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Echec lors de la modification du livre avec l'id 3"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bibliotheque/{id}": {
+            "delete": {
+                "summary": "Supprimer un livre de la bibliothèque",
+                "tags": ["SupprimerLivre"],
+                "description": "Supprimer un livre en fonction de son id",
+                "parameters":  [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id du livre",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "exemple" : "1"
+                        }
+                    }
+                ],
+                "security": [
+                    { "ApiKeyAuth": [] }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Supprime le livre de la base de donnée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le livre avec l'id 2 a été supprimé avec succès"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                     "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Clé API invalide"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Le livre n'existe pas dans la base de donnée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le livre avec l'id 2 n'existe pas dans la base de données"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Suppression du livre non rencontrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Echec lors de la suppression du livre avec l'id 2"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        },
+        "/api/bibliotheque/modifier_status_pret/{id}": {
+            "put": {
+                "summary": "Route qui modifie la disponibilité d'un pret.",
+                "tags": ["PretModifie"],
+                "description": "Modifier le status d'un pret.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id du livre",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "exemple" : "1"
+                        }
+                    }
+                ],
+                "security": [
+                    { "ApiKeyAuth": [] }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                         "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "disponible": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        }
+                                    }
+                                }
+                            }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Modifie le champs 'disponible' de la table pret.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le pret avec l'id 4 a été modifié avec succès"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Clé API invalide"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Le pret n'existe pas dans la base de donnée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le pret avec l'id 4 n'existe pas dans la base de données"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Modification du pret non rencontrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Echec lors de la modification du pret 4"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bibliotheque/ajout_pret": {
+            
+        }
+    }
+ }
