@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express';
 import fs from 'fs';
 const swaggerDocument = JSON.parse(fs.readFileSync('./src/config/documentation.json', 'utf8'));
 import router from './src/routes/livres.route.js'
+import cors from 'cors';
 
 const swaggerOptions = {
     customCss: '.swagger-ui .topbar { display: none }',
@@ -15,6 +16,8 @@ dotenv.config();
 
 // Middleware
 app.use(express.json());
+
+app.use(cors());
 
 // Visuel documentation
 app.use('/api/docs',

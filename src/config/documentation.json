@@ -191,7 +191,6 @@
                                             "type": "boolean",
                                             "example": false
                                         },
-                                        
                                         "type": "array",
                                         "prets": {
                                             "items": {
@@ -1194,10 +1193,6 @@
                                         "courriel": {
                                             "type": "string",
                                             "example": "bibli.laval@gmail.com"
-                                        },
-                                        "cle_api": {
-                                            "type": "string",
-                                            "example": "12345"
                                         },
                                         "password": {
                                             "type": "string",
