@@ -565,7 +565,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "",
+                        "description": "Le livre a été modifié avec succès dans la base de donnée.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -722,7 +722,6 @@
                         }
                     }
                 }
-
             }
         },
         "/api/bibliotheque/modifier_status_pret/{id}": {
@@ -825,7 +824,561 @@
             }
         },
         "/api/bibliotheque/ajout_pret": {
-            
+            "post": {
+                "summary": "Ajout d'un prêt à un livre existant",
+                "tags": ["PretAjout"],
+                "security": [
+                    { "ApiKeyAuth": [] }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                         "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "livre_id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "example": "1"
+                                        },
+                                        "emprunteur": {
+                                            "type": "string",
+                                            "example": "Christine Lehoux"
+                                        }, 
+                                        "date_retour": {
+                                            "type": "string",
+                                            "example": "2013-03-25T04:00:00.000Z"
+                                        },
+                                        "disponible": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        }
+                                    }
+                                }
+
+                         }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ajout d'un pret",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                   "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le pret 3 a été ajouté avec succès"
+                                            },
+                                        "pret": {
+                                            "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "format": "int32",
+                                                        "example":  1
+                                                    },
+                                                    "livre_id": {
+                                                        "type": "integer",
+                                                        "format": "int32",
+                                                        "example":  1
+                                                    },
+                                                    "emprunteur": {
+                                                        "type": "string",
+                                                        "example": "Didier Mathieu"
+                                                    },
+                                                    "date_retour": {
+                                                        "type": "string",
+                                                        "example": "2023-07-1T04:00:00.000Z"
+                                                    },
+                                                    "disponible": {
+                                                        "type": "boolean",
+                                                        "example": false
+                                                    }
+                                                }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Format invalide des données",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le format des données est invalide"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Clé API invalide"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Le livre n'existe pas dans la base de donnée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le livre avec l'id 3 n'existe pas dans la base de données"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Ajout du prêt non rencontré",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Echec lors de l'ajout du pret 3"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bibliotheque/modifier_pret/{id}": {
+            "put": {
+                "summary": "Route qui modifie les détails d'un prêt",
+                "tags": ["PretModifie"],
+                "description": "Modifier les détails d'un prêt selon l'id mis dans l'url.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id du pret",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "exemple" : "1"
+                        }
+                    }
+                ],
+                "security": [
+                    { "ApiKeyAuth": [] }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                         "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "livre_id": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "example": 1
+                                        },
+                                        "emprunteur": {
+                                            "type": "string",
+                                            "example": "Christine Lehoux"
+                                        },
+                                        "date_retour": {
+                                            "type": "string",
+                                            "example": "2023-07-1T04:00:00.000Z"
+                                        },
+                                        "disponible": {
+                                            "type": "boolean",
+                                            "example": false
+                                        }
+                                    }
+                                }
+                            }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Le prêt a été modifié avec succès dans la base de donnée.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le prêt avec l'id 1 a été modifié avec succès"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Format invalide des données",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le format des données est invalide"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Clé API invalide"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Le prêt n'existe pas dans la base de donnée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le prêt avec l'id 3 n'existe pas dans la base de données"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Modification du prêt non rencontrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Echec lors de la modification du prêt avec l'id 3"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bibliotheque/supp_pret/{id}": {
+            "delete": {
+                "summary": "Supprimer un prêt d'un livre",
+                "tags": ["SupprimerPret"],
+                "description": "Supprimer un prêt en fonction de son id",
+                "parameters":  [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "Id du prêt",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "exemple" : "1"
+                        }
+                    }
+                ],
+                "security": [
+                    { "ApiKeyAuth": [] }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Supprime le prêt de la base de donnée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le prêt avec l'id 2 a été supprimé avec succès"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                     "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Clé API invalide"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Le prêt n'existe pas dans la base de donnée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le prêt avec l'id 2 n'existe pas dans la base de données"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Suppression du prêt non rencontrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Echec lors de la suppression du prêt avec l'id 2"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bibliotheque/ajout_bibli": {
+            "post": {
+                "summary": "Ajout d'une bibliothèque dans la base de donnée",
+                "tags": ["BibliAjout"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                         "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "nom": {
+                                            "type": "string",
+                                            "example": "Bibliothèque Laval"
+                                        }, 
+                                        "courriel": {
+                                            "type": "string",
+                                            "example": "bibli.laval@gmail.com"
+                                        },
+                                        "cle_api": {
+                                            "type": "string",
+                                            "example": "12345"
+                                        },
+                                        "password": {
+                                            "type": "string",
+                                            "example": "coquillageRose"
+                                        }
+                                    }
+                                }
+
+                         }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ajout d'une bibliothèque",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                   "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "La bibliothèque 6 a été ajouté avec succès"
+                                            },
+                                        "cle_api": {
+                                            "type": "string",
+                                            "example": "27ff135e-1d59-42b2-92c1-951ce6b571b0"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Format invalide des données",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Le format des données est invalide"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Clé API invalide"
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Ajout d'une bibliothèque non rencontré",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Echec lors de l'ajout de la bibliothèque"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bibliotheque/cle_api": {
+            "post": {
+                "summary": "Récupération d'une clé api depuis une bibliothèque existante",
+                "tags": ["BibliCleApi"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                         "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "courriel": {
+                                            "type": "string",
+                                            "example": "chris@gmail.com"
+                                        },
+                                        "password": {
+                                            "type": "string",
+                                            "example": "did"
+                                        }
+                                    }
+                                }
+
+                         }
+                    }
+                },
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "nouvelle",
+                        "description": "Pour regénérer une clé api pour une bibliothèque.",
+                        "schema": {
+                            "type": "boolean",
+                            "example": false
+                        },
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retourne la cle d'API d'une bibliothèque",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "cle_api": {
+                                            "type": "string",
+                                            "example": "c7e5a094-76a3-4fb1-894f-a6f87322f8ad"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Retourne une erreur si le champ courriel ou password n'est pas valide ou est vide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Les champs courriel et password sont obligatoires"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "La bibliothèque avec ce courriel et ce mot de passe n'existe pas dans la base de donnée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Aucune bibliothèque trouvée avec ce courriel et ce mot de passe"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Récupération de la cle api de livres non rencontrée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erreur lors de la récupération de la clé API"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
  }

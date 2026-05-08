@@ -40,13 +40,10 @@ export const getCleApiController = async (req, res) => {
 
     try {
         const bibliotheque = await getBibliothequeParCourriel(courriel);
-        if (!bibliotheque) {
-            return res.status(404).json({ erreur: 'Aucune bibliothèque trouvée avec ce courriel' });
-        }
-
         const motDePasseValide = await bcrypt.compare(password, bibliotheque.password);
-        if (!motDePasseValide) {
-            return res.status(401).json({ erreur: 'Password invalide' });
+
+        if (!bibliotheque && !motDePasseValide) {
+            return res.status(404).json({ erreur: 'Aucune bibliothèque trouvée avec ce courriel et ce mot de passe' });
         }
 
         let cle_api = bibliotheque.cle_api;

@@ -195,7 +195,7 @@ export const supprimerUnPret = async (req, res) => {
             return res.status(404).json({ erreur: `Le pret avec l'id ${id} n'existe pas dans la base de données` });
         }
 
-        res.status(200).json({ message: `Le livre avec l'pret avec l'id ${id} a été supprimé avec succès` });
+        res.status(200).json({ message: `Le prêt avec l'id ${id} a été supprimé avec succès` });
     } catch (erreur) {
         res.status(500).json({ erreur: `Echec lors de la suppression du pret avec l'id ${id}` });
     }
