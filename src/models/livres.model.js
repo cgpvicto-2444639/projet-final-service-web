@@ -33,7 +33,7 @@ export const getLivreById = async (id) => {
 };
 
 export const getPretsByLivreId = async (id) => {
-    const requete = `SELECT livre_id, emprunteur, date_retour, disponible FROM prets WHERE livre_id = $1;`;
+    const requete = `SELECT id, livre_id, emprunteur, date_retour, disponible FROM prets WHERE livre_id = $1;`;
     const params = [id];
 
     try {
